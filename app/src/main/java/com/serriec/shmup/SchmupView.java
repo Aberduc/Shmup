@@ -48,7 +48,6 @@ public class SchmupView extends SurfaceView implements Runnable {
     private int lastScoreLevelUp;
 
     private int score;
-    private int lives;
 
     private int highScore;
     SharedPreferences settings;
@@ -74,8 +73,6 @@ public class SchmupView extends SurfaceView implements Runnable {
 
         enemies = new Enemy[50];
 
-        lives = 0;
-
         prepareLevel();
     }
 
@@ -88,7 +85,7 @@ public class SchmupView extends SurfaceView implements Runnable {
             enemies[i] = new Enemy(screenX, screenY);
         }
 
-        spaceShip.reset(screenX, screenY);
+        spaceShip.reset();
 
         lastPlayerBulletShot = 0;
         timeBetweenTwoShots = 50;
@@ -100,7 +97,6 @@ public class SchmupView extends SurfaceView implements Runnable {
 
         lastScoreLevelUp = 0;
         score = 0;
-        lives = 3;
     }
 
     @Override
@@ -127,32 +123,22 @@ public class SchmupView extends SurfaceView implements Runnable {
             canvas = ourHolder.lockCanvas();
             canvas.drawColor(Color.argb(255, 26, 128, 182));
 
-            paint.setColor(Color.argb(255, 255, 255, 255));
-            canvas.drawCircle(spaceShip.getX(), spaceShip.getY(), spaceShip.getRadius(), paint);
+            spaceShip.draw(canvas, paint, screenX, screenY);
+
             for (int i = 0; i < playerBullets.length; i++) {
-                if (playerBullets[i].isActive()) {
-                    canvas.drawCircle(playerBullets[i].getX(), playerBullets[i].getY(), playerBullets[i].getRadius(), paint);
-                }
+                playerBullets[i].draw(canvas, paint, screenX, screenY);
             }
+
             paint.setTextSize(40);
             paint.setTextAlign(Paint.Align.LEFT);
-            canvas.drawText("Lives " + lives + "   Score " + score, 10, 50, paint);
+            canvas.drawText("Lives " + spaceShip.getLives() + "   Score " + score, 10, 50, paint);
 
 
             for (int i = 0; i < enemies.length; i++) {
-                if (enemies[i].isActive()) {
-                    paint.setColor(Color.argb(255, 255, 0, 0));
-                    canvas.drawCircle(enemies[i].getX(), enemies[i].getY(), enemies[i].getRadius(), paint);
-                    if (enemies[i].getLives() > 1) {
-                        paint.setColor(Color.argb(255, 0, 0, 0));
-                        paint.setTextSize(enemies[i].getRadius());
-                        paint.setTextAlign(Paint.Align.CENTER);
-                        canvas.drawText(String.valueOf(enemies[i].getLives()), enemies[i].getX(), enemies[i].getY() +enemies[i].getRadius()/2, paint);
-                    }
-                }
+                enemies[i].draw(canvas, paint, screenX, screenY);
             }
 
-            if (lives <= 0) {
+            if (spaceShip.getLives() <= 0) {
                 paint.setTextAlign(Paint.Align.CENTER);
                 String text;
 
@@ -185,13 +171,11 @@ public class SchmupView extends SurfaceView implements Runnable {
     private void update() {
         spaceShip.update(fps);
         for (int i = 0; i < playerBullets.length; i++) {
-            if (playerBullets[i].isActive()) {
-                playerBullets[i].update(fps);
-            }
+            playerBullets[i].update(fps);
         }
 
         if (System.currentTimeMillis() - timeLastEnemy > timeBetweenTwoEnemies) {
-            enemies[lastEnemy].restartEnemy();
+            enemies[lastEnemy].reset();
             timeLastEnemy = System.currentTimeMillis();
             if (lastEnemy < enemies.length - 1) {
                 lastEnemy++;
@@ -202,11 +186,12 @@ public class SchmupView extends SurfaceView implements Runnable {
 
         for (int i = 0; i < enemies.length; i++) {
             if (enemies[i].isActive()) {
-                enemies[i].update(fps, spaceShip.getX(), spaceShip.getY());
+                enemies[i].setGoal(spaceShip.getX(), spaceShip.getY());
+                enemies[i].update(fps);
                 if ((enemies[i].getX() - spaceShip.getX()) * (enemies[i].getX() - spaceShip.getX()) + (enemies[i].getY() - spaceShip.getY()) * (enemies[i].getY() - spaceShip.getY()) < (spaceShip.getRadius()) * (spaceShip.getRadius())) {
                     enemies[i].setInactive();
-                    lives--;
-                    if (lives == 0) {
+                    spaceShip.shot();
+                    if (spaceShip.getLives() <= 0) {
                         paused = true;
                     }
                 }
@@ -260,11 +245,11 @@ public class SchmupView extends SurfaceView implements Runnable {
                 spaceShip.setGoal(motionEvent.getX(), motionEvent.getY());
                 if (System.currentTimeMillis() - timeLastShot > timeBetweenTwoShots) {
                     if (lastPlayerBulletShot < playerBullets.length - 1) {
-                        playerBullets[lastPlayerBulletShot].shoot(spaceShip.getX(), spaceShip.getY(), motionEvent.getX(), motionEvent.getY());
+                        playerBullets[lastPlayerBulletShot].reset(spaceShip.getX(), spaceShip.getY(), motionEvent.getX(), motionEvent.getY());
                         timeLastShot = System.currentTimeMillis();
                         lastPlayerBulletShot++;
                     } else {
-                        playerBullets[lastPlayerBulletShot].shoot(spaceShip.getX(), spaceShip.getY(), motionEvent.getX(), motionEvent.getY());
+                        playerBullets[lastPlayerBulletShot].reset(spaceShip.getX(), spaceShip.getY(), motionEvent.getX(), motionEvent.getY());
                         timeLastShot = System.currentTimeMillis();
                         lastPlayerBulletShot = 0;
                     }
@@ -272,7 +257,7 @@ public class SchmupView extends SurfaceView implements Runnable {
                 break;
             case MotionEvent.ACTION_DOWN:
                 if (paused) {
-                    if (lives <= 0) {
+                    if (spaceShip.getLives() <= 0) {
                         this.prepareLevel();
                     }
                     paused = false;
@@ -280,11 +265,11 @@ public class SchmupView extends SurfaceView implements Runnable {
                 spaceShip.setGoal(motionEvent.getX(), motionEvent.getY());
                 if (System.currentTimeMillis() - timeLastShot > timeBetweenTwoShots) {
                     if (lastPlayerBulletShot < playerBullets.length - 1) {
-                        playerBullets[lastPlayerBulletShot].shoot(spaceShip.getX(), spaceShip.getY(), motionEvent.getX(), motionEvent.getY());
+                        playerBullets[lastPlayerBulletShot].reset(spaceShip.getX(), spaceShip.getY(), motionEvent.getX(), motionEvent.getY());
                         timeLastShot = System.currentTimeMillis();
                         lastPlayerBulletShot++;
                     } else {
-                        playerBullets[lastPlayerBulletShot].shoot(spaceShip.getX(), spaceShip.getY(), motionEvent.getX(), motionEvent.getY());
+                        playerBullets[lastPlayerBulletShot].reset(spaceShip.getX(), spaceShip.getY(), motionEvent.getX(), motionEvent.getY());
                         timeLastShot = System.currentTimeMillis();
                         lastPlayerBulletShot = 0;
                     }

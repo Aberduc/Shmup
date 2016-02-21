@@ -1,12 +1,8 @@
 package com.serriec.shmup;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 
-/**
- * Created by serriec on 20/02/2016.
- */
 public class Circle implements Drawable{
     private float x;
     private float y;
@@ -24,5 +20,21 @@ public class Circle implements Drawable{
     public void draw(Canvas canvas, Paint paint, int screenX, int screenY) {
         paint.setColor(color);
         canvas.drawCircle(x, y, radius, paint);
+    }
+
+    public void setX(float x) {
+        this.x = x;
+    }
+
+    public void setY(float y) {
+        this.y = y;
+    }
+
+    public float getRadius() {
+        return radius;
+    }
+
+    public void setRadius(float radius) {
+        this.radius = radius;
     }
 }

@@ -1,78 +1,59 @@
 package com.serriec.shmup;
 
-import android.graphics.RectF;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 
-/**
- * Created by serriec on 18/02/2016.
- */
-public class PlayerSpaceShip {
-    private float radius;
-    private float speed;
-    private float goalX;
-    private float goalY;
-    private float x;
-    private float y;
-
+public class PlayerSpaceShip extends MovingGoal {
+    private float baseX;
+    private float baseY;
+    private float baseSpeed;
+    private float baseRadius;
+    private int lives;
 
     public PlayerSpaceShip(int screenX, int screenY) {
-        radius = screenX/15;
-        speed = screenY/3.5f;
-        x = screenX / 2;
-        y = screenY / 2;
+        super(Color.argb(255, 255, 255, 255));
+        baseX = screenX / 2;
+        baseY = screenY / 2;
+        baseSpeed = screenX / 3.5f;
+        baseRadius = screenX / 15;
+        setX(baseX);
+        setY(baseY);
+        setRadius(baseRadius);
+        this.setSpeed(baseSpeed);
     }
 
-    public float getRadius() {
-        return radius;
-    }
-
-    public void setGoal(float x, float y) {
-        goalX = x;
-        goalY = y;
-    }
-
-    public void update(long fps) {
-        float d = speed / fps;
-        if (d < (float) Math.sqrt((x - goalX) * (x - goalX) + (y - goalY) * (y - goalY))) {
-            if (x != goalX) {
-                float a = (y - goalY) / (x - goalX);
-                float b = y - a * x;
-                if (x < goalX) {
-                    x = x + d / ((float) Math.sqrt(1 + a * a));
-                    y = a * x + b;
-                } else {
-                    x = x - d / ((float) Math.sqrt(1 + a * a));
-                    y = a * x + b;
-                }
-            } else if (y != goalY) {
-                if (y < goalY) {
-                    y = y + d;
-                } else {
-                    y = y - d;
-                }
-            }
-        } else {
-            x = goalX;
-            y = goalY;
-        }
-
-
-    }
-
-    public float getX() {
-        return x;
-    }
-
-    public float getY() {
-        return y;
-    }
-
-    public void reset(int screenX, int screenY) {
-        this.x = screenX/2;
-        this.y = screenY/2;
-        this.speed = screenY/3.5f;
+    @Override
+    public void reset() {
+        this.setX(baseX);
+        this.setY(baseY);
+        this.setSpeed(baseSpeed);
+        this.setRadius(baseRadius);
+        this.lives = 3;
     }
 
     public void upSpeed() {
-        speed = speed *1.1f;
+        this.setSpeed(this.getSpeed() * 1.1f);
     }
+
+    public void shot() {
+        lives--;
+        setRadius(getRadius() * 0.7f);
+    }
+
+    public int getLives() {
+        return lives;
+    }
+
+    @Override
+    public void draw(Canvas canvas, Paint paint, int screenX, int screenY) {
+        super.draw(canvas, paint, screenX, screenY);
+
+        paint.setColor(Color.argb(255, 0, 0, 0));
+        paint.setTextSize(getRadius());
+        paint.setTextAlign(Paint.Align.CENTER);
+        canvas.drawText(String.valueOf(lives), this.getX(), this.getY() + getRadius() / 2, paint);
+
+    }
+
 }
