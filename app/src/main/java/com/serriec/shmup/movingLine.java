@@ -39,7 +39,7 @@ public abstract class MovingLine extends Moving implements Item {
             vertical = true;
             heading = RIGHT;
         }
-        heading = - heading;
+        heading = -heading;
     }
 
     @Override

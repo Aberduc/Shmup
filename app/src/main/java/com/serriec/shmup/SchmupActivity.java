@@ -33,13 +33,13 @@ public class SchmupActivity extends Activity {
     }
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
         schmupView.resume();
     }
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
         schmupView.pause();
     }

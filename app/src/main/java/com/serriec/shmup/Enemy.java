@@ -14,12 +14,12 @@ public class Enemy extends MovingGoal {
 
 
     public Enemy(int screenX, int screenY) {
-        super(Color.argb(255,255,0,0));
+        super(Color.argb(255, 255, 0, 0));
         this.screenX = screenX;
         this.screenY = screenY;
     }
 
-    public  boolean isActive() {
+    public boolean isActive() {
         return isActive;
     }
 
@@ -31,15 +31,14 @@ public class Enemy extends MovingGoal {
         lives--;
         if (lives <= 0) {
             isActive = false;
-        }
-        else {
+        } else {
             setRadius(screenX / 30 * ((float) Math.sqrt(lives)));
-            this.setSpeed(screenY/6 * ((float) Math.pow(1.1, lives -1)));
+            this.setSpeed(screenY / 6 * ((float) Math.pow(1.1, lives - 1)));
         }
     }
 
-    public static void mergeEnemies (Enemy e1, Enemy e2) {
-        if(e1.isActive && e2.isActive) {
+    public static void mergeEnemies(Enemy e1, Enemy e2) {
+        if (e1.isActive && e2.isActive) {
             e1.lives = e1.lives + e2.lives;
             e2.isActive = false;
             e1.setRadius(e1.screenX / 30 * ((float) Math.sqrt(e1.lives)));
@@ -49,7 +48,7 @@ public class Enemy extends MovingGoal {
 
     @Override
     public void reset() {
-        if(!isActive) {
+        if (!isActive) {
             Random generator = new Random();
             int topBottomLeftRight = generator.nextInt(4);
             if (topBottomLeftRight == 0) {
@@ -74,13 +73,13 @@ public class Enemy extends MovingGoal {
 
     @Override
     public void draw(Canvas canvas, Paint paint, int screenX, int screenY) {
-        if(isActive) {
+        if (isActive) {
             super.draw(canvas, paint, screenX, screenY);
             if (lives > 1) {
                 paint.setColor(Color.argb(255, 0, 0, 0));
                 paint.setTextSize(getRadius());
                 paint.setTextAlign(Paint.Align.CENTER);
-                canvas.drawText(String.valueOf(lives), this.getX(), this.getY() + getRadius() / 2, paint);
+                canvas.drawText(String.valueOf(lives), this.getX(), this.getY() + getRadius() * 3 / 8, paint);
             }
         }
     }

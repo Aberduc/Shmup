@@ -8,8 +8,8 @@ public class Bullet extends MovingLine {
     private boolean isActive;
 
     public Bullet(int screenX, int screenY) {
-        super(Color.argb(255,255,255,255));
-        this.setSpeed(screenY/2);
+        super(Color.argb(255, 255, 255, 255));
+        this.setSpeed(screenY / 2);
         setX(0);
         setY(0);
         setRadius(6);
@@ -29,21 +29,21 @@ public class Bullet extends MovingLine {
     }
 
     @Override
-    public void reset (float startX, float startY, float goalX, float goalY){
+    public void reset(float startX, float startY, float goalX, float goalY) {
         super.reset(startX, startY, goalX, goalY);
         isActive = true;
     }
 
     @Override
     public void draw(Canvas canvas, Paint paint, int screenX, int screenY) {
-        if(isActive) {
+        if (isActive) {
             super.draw(canvas, paint, screenX, screenY);
         }
     }
 
     @Override
-    public void update(long fps){
-        if(isActive) {
+    public void update(long fps) {
+        if (isActive) {
             super.update(fps);
         }
     }

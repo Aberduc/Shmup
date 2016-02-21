@@ -1,6 +1,6 @@
 package com.serriec.shmup;
 
-public abstract class MovingGoal extends Moving implements Item{
+public abstract class MovingGoal extends Moving implements Item {
     private float goalX;
     private float goalY;
 
@@ -35,7 +35,7 @@ public abstract class MovingGoal extends Moving implements Item{
         }
     }
 
-    public void setGoal(float x, float y){
+    public void setGoal(float x, float y) {
         this.goalX = x;
         this.goalY = y;
     }

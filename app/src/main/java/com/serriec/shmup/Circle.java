@@ -3,7 +3,7 @@ package com.serriec.shmup;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
-public class Circle implements Drawable{
+public class Circle implements Drawable {
     private float x;
     private float y;
     private float radius;
@@ -36,5 +36,13 @@ public class Circle implements Drawable{
 
     public void setRadius(float radius) {
         this.radius = radius;
+    }
+
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
     }
 }

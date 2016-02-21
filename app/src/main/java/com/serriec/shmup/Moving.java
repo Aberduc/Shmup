@@ -8,13 +8,13 @@ import android.graphics.Paint;
  * Created by serriec on 20/02/2016.
  */
 public abstract class Moving implements Item {
-    private  float x;
+    private float x;
     private float y;
     private float speed;
     private Circle circle;
 
-    public Moving(int color){
-        circle = new Circle(0,0,0, color);
+    public Moving(int color) {
+        circle = new Circle(0, 0, 0, color);
     }
 
     public float getX() {
@@ -43,15 +43,15 @@ public abstract class Moving implements Item {
         this.speed = speed;
     }
 
-    public float getRadius(){
+    public float getRadius() {
         return circle.getRadius();
     }
 
-    public void setRadius (float radius){
+    public void setRadius(float radius) {
         circle.setRadius(radius);
     }
 
-    public void draw (Canvas canvas, Paint paint, int screenX, int screenY){
-        circle.draw(canvas,paint,screenX,screenY);
+    public void draw(Canvas canvas, Paint paint, int screenX, int screenY) {
+        circle.draw(canvas, paint, screenX, screenY);
     }
 }

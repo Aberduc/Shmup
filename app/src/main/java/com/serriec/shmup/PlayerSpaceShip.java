@@ -52,8 +52,13 @@ public class PlayerSpaceShip extends MovingGoal {
         paint.setColor(Color.argb(255, 0, 0, 0));
         paint.setTextSize(getRadius());
         paint.setTextAlign(Paint.Align.CENTER);
-        canvas.drawText(String.valueOf(lives), this.getX(), this.getY() + getRadius() / 2, paint);
+        canvas.drawText(String.valueOf(lives), this.getX(), this.getY() + getRadius() * 3 / 8, paint);
 
+    }
+
+    public void upLives() {
+        lives++;
+        setRadius(getRadius() * 10f / 7f);
     }
 
 }

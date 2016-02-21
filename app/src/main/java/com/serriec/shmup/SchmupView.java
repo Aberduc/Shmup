@@ -47,6 +47,9 @@ public class SchmupView extends SurfaceView implements Runnable {
 
     private int lastScoreLevelUp;
 
+    private int lastScoreLife;
+    private Life life;
+
     private int score;
 
     private int highScore;
@@ -72,6 +75,7 @@ public class SchmupView extends SurfaceView implements Runnable {
         playerBullets = new Bullet[50];
 
         enemies = new Enemy[50];
+        life = new Life(screenX, screenY);
 
         prepareLevel();
     }
@@ -97,6 +101,9 @@ public class SchmupView extends SurfaceView implements Runnable {
 
         lastScoreLevelUp = 0;
         score = 0;
+
+        life.setInactive();
+        lastScoreLife = 0;
     }
 
     @Override
@@ -123,12 +130,15 @@ public class SchmupView extends SurfaceView implements Runnable {
             canvas = ourHolder.lockCanvas();
             canvas.drawColor(Color.argb(255, 26, 128, 182));
 
-            spaceShip.draw(canvas, paint, screenX, screenY);
+            life.draw(canvas, paint, screenX, screenY);
 
             for (int i = 0; i < playerBullets.length; i++) {
                 playerBullets[i].draw(canvas, paint, screenX, screenY);
             }
 
+            spaceShip.draw(canvas, paint, screenX, screenY);
+
+            paint.setColor(Color.argb(255, 255, 255, 255));
             paint.setTextSize(40);
             paint.setTextAlign(Paint.Align.LEFT);
             canvas.drawText("Lives " + spaceShip.getLives() + "   Score " + score, 10, 50, paint);
@@ -170,6 +180,18 @@ public class SchmupView extends SurfaceView implements Runnable {
 
     private void update() {
         spaceShip.update(fps);
+
+        if (score >= lastScoreLife + 500 && !life.isActive()) {
+            life.reset();
+            lastScoreLife = score;
+        }
+        if (life.isActive()) {
+            if ((life.getX() - spaceShip.getX()) * (life.getX() - spaceShip.getX()) + (life.getY() - spaceShip.getY()) * (life.getY() - spaceShip.getY()) < (spaceShip.getRadius()) * (spaceShip.getRadius())) {
+                life.setInactive();
+                spaceShip.upLives();
+            }
+        }
+
         for (int i = 0; i < playerBullets.length; i++) {
             playerBullets[i].update(fps);
         }
