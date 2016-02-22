@@ -1,6 +1,6 @@
 package com.serriec.shmup;
 
-public abstract class MovingGoal extends Moving implements Item {
+public abstract class MovingGoal extends Moving{
     private float goalX;
     private float goalY;
 

@@ -1,19 +1,25 @@
 package com.serriec.shmup;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 
-/**
- * Created by serriec on 20/02/2016.
- */
-public abstract class Moving extends Item {
-    private float speed;
+
+public abstract class Still extends Item {
     private Circle circle;
 
-    public Moving(int color) {
+    public Still(int color) {
         super();
-        circle = new Circle(0, 0, 0, color);
+        circle = new Circle(getX(), getY(), 0, color);
+    }
+
+    @Override
+    void update(long fps) {
+
+    }
+
+    @Override
+    void reset() {
+
     }
 
     @Override
@@ -28,20 +34,16 @@ public abstract class Moving extends Item {
         circle.setY(y);
     }
 
-    public float getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(float speed) {
-        this.speed = speed;
-    }
-
     public float getRadius() {
         return circle.getRadius();
     }
 
     public void setRadius(float radius) {
         circle.setRadius(radius);
+    }
+
+    public void setColor(int color) {
+        circle.setColor(color);
     }
 
     @Override

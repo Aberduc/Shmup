@@ -8,6 +8,7 @@ public class PlayerSpaceShip extends MovingGoal {
     private float baseX;
     private float baseY;
     private float baseSpeed;
+    private float maxSpeed;
     private float baseRadius;
     private int lives;
 
@@ -16,6 +17,7 @@ public class PlayerSpaceShip extends MovingGoal {
         baseX = screenX / 2;
         baseY = screenY / 2;
         baseSpeed = screenX / 3.5f;
+        maxSpeed = 4*screenX;
         baseRadius = screenX / 15;
         setX(baseX);
         setY(baseY);
@@ -33,7 +35,12 @@ public class PlayerSpaceShip extends MovingGoal {
     }
 
     public void upSpeed() {
-        this.setSpeed(this.getSpeed() * 1.1f);
+        if(getSpeed()*1.1f > maxSpeed) {
+            setSpeed(maxSpeed);
+        }
+        else {
+            this.setSpeed(this.getSpeed() * 1.1f);
+        }
     }
 
     public void shot() {

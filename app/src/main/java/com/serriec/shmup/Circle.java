@@ -3,15 +3,14 @@ package com.serriec.shmup;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
-public class Circle implements Drawable {
-    private float x;
-    private float y;
+public class Circle extends Drawable {
     private float radius;
     private int color;
 
     public Circle(float x, float y, float radius, int color) {
-        this.x = x;
-        this.y = y;
+        super();
+        this.setX(x);
+        this.setY(y);
         this.radius = radius;
         this.color = color;
     }
@@ -19,15 +18,7 @@ public class Circle implements Drawable {
     @Override
     public void draw(Canvas canvas, Paint paint, int screenX, int screenY) {
         paint.setColor(color);
-        canvas.drawCircle(x, y, radius, paint);
-    }
-
-    public void setX(float x) {
-        this.x = x;
-    }
-
-    public void setY(float y) {
-        this.y = y;
+        canvas.drawCircle(getX(), getY(), radius, paint);
     }
 
     public float getRadius() {
@@ -38,11 +29,7 @@ public class Circle implements Drawable {
         this.radius = radius;
     }
 
-    public float getX() {
-        return x;
-    }
-
-    public float getY() {
-        return y;
+    public void setColor(int color) {
+        this.color = color;
     }
 }

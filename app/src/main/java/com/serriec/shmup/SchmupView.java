@@ -50,6 +50,9 @@ public class SchmupView extends SurfaceView implements Runnable {
     private int lastScoreLife;
     private Life life;
 
+    private int lastScoreABomb;
+    private ABomb aBomb;
+
     private int score;
 
     private int highScore;
@@ -76,6 +79,7 @@ public class SchmupView extends SurfaceView implements Runnable {
 
         enemies = new Enemy[50];
         life = new Life(screenX, screenY);
+        aBomb = new ABomb(screenX, screenY);
 
         prepareLevel();
     }
@@ -104,6 +108,9 @@ public class SchmupView extends SurfaceView implements Runnable {
 
         life.setInactive();
         lastScoreLife = 0;
+
+        aBomb.setInactive();
+        lastScoreABomb = 0;
     }
 
     @Override
@@ -131,6 +138,8 @@ public class SchmupView extends SurfaceView implements Runnable {
             canvas.drawColor(Color.argb(255, 26, 128, 182));
 
             life.draw(canvas, paint, screenX, screenY);
+
+            aBomb.draw(canvas, paint, screenX, screenY);
 
             for (int i = 0; i < playerBullets.length; i++) {
                 playerBullets[i].draw(canvas, paint, screenX, screenY);
@@ -185,12 +194,26 @@ public class SchmupView extends SurfaceView implements Runnable {
             life.reset();
             lastScoreLife = score;
         }
+
         if (life.isActive()) {
             if ((life.getX() - spaceShip.getX()) * (life.getX() - spaceShip.getX()) + (life.getY() - spaceShip.getY()) * (life.getY() - spaceShip.getY()) < (spaceShip.getRadius()) * (spaceShip.getRadius())) {
                 life.setInactive();
                 spaceShip.upLives();
             }
         }
+
+        if (score >= lastScoreABomb + 700 && !aBomb.isActive()) {
+            aBomb.reset();
+            lastScoreABomb = score;
+        }
+
+        if (aBomb.isActive()) {
+            if ((aBomb.getX() - spaceShip.getX()) * (aBomb.getX() - spaceShip.getX()) + (aBomb.getY() - spaceShip.getY()) * (aBomb.getY() - spaceShip.getY()) < (spaceShip.getRadius()) * (spaceShip.getRadius())) {
+                aBomb.activate();
+            }
+        }
+
+        aBomb.update(fps);
 
         for (int i = 0; i < playerBullets.length; i++) {
             playerBullets[i].update(fps);
@@ -210,13 +233,20 @@ public class SchmupView extends SurfaceView implements Runnable {
             if (enemies[i].isActive()) {
                 enemies[i].setGoal(spaceShip.getX(), spaceShip.getY());
                 enemies[i].update(fps);
-                if ((enemies[i].getX() - spaceShip.getX()) * (enemies[i].getX() - spaceShip.getX()) + (enemies[i].getY() - spaceShip.getY()) * (enemies[i].getY() - spaceShip.getY()) < (spaceShip.getRadius()) * (spaceShip.getRadius())) {
+                if ((enemies[i].getX() - spaceShip.getX()) * (enemies[i].getX() - spaceShip.getX()) + (enemies[i].getY() - spaceShip.getY()) * (enemies[i].getY() - spaceShip.getY()) < (Math.max(spaceShip.getRadius(), enemies[i].getRadius()) * Math.max(spaceShip.getRadius(), enemies[i].getRadius()))) {
                     enemies[i].setInactive();
                     spaceShip.shot();
                     if (spaceShip.getLives() <= 0) {
                         paused = true;
                     }
                 }
+
+                if(aBomb.isActivated()) {
+                    if ((enemies[i].getX() - aBomb.getX()) * (enemies[i].getX() - aBomb.getX()) + (enemies[i].getY() - aBomb.getY()) * (enemies[i].getY() - aBomb.getY()) < Math.max(enemies[i].getRadius(), aBomb.getRadius()) * Math.max(enemies[i].getRadius(), aBomb.getRadius())) {
+                        enemies[i].setInactive();
+                    }
+                }
+
                 for (int j = 0; j < playerBullets.length; j++) {
                     if (playerBullets[j].isActive()) {
                         if ((enemies[i].getX() - playerBullets[j].getX()) * (enemies[i].getX() - playerBullets[j].getX()) + (enemies[i].getY() - playerBullets[j].getY()) * (enemies[i].getY() - playerBullets[j].getY()) < (enemies[i].getRadius()) * (enemies[i].getRadius())) {

@@ -3,7 +3,7 @@ package com.serriec.shmup;
 /**
  * Created by serriec on 20/02/2016.
  */
-public abstract class MovingLine extends Moving implements Item {
+public abstract class MovingLine extends Moving {
     private float a;
     private float b;
     private boolean vertical;
