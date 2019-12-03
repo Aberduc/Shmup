@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="lifeDelay">500</integer>
+    <integer name="lifeFirstPop">750</integer>
+
+    <integer name="bombDelay">1000</integer>
+    <integer name="bombFirstPop">1000</integer>
+
+    <integer name="shieldDelay">2000</integer>
+    <integer name="shieldFirstPop">500</integer>
+
+    <integer name="piercingBulletDelay">2000</integer>
+    <integer name="piercingBulletFirstPop">1500</integer>
+</resources>
